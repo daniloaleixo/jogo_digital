@@ -1,0 +1,23 @@
+{
+  "name": "jogo_digital",
+  "version": "1.0.0",
+  "description": "## Matriz Para identificar cada ladrilho ao gerar a calçada",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniloaleixo/jogo_digital.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniloaleixo/jogo_digital/issues"
+  },
+  "homepage": "https://github.com/daniloaleixo/jogo_digital#readme",
+  "devDependencies": {
+    "browser-sync": "^2.18.1",
+    "gulp": "^3.9.1"
+  }
+}
