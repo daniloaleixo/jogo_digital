@@ -55,9 +55,15 @@ var GAME = {
 
         // include this at the end of GAME.init function
         GAME.Draw.clear();
-        GAME.Draw.rect(120,120,150,150, 'green');
-        GAME.Draw.circle(100, 100, 50, 'rgba(255,0,0,0.5)');
-        GAME.Draw.text('Hello World', 100, 100, 10, '#000');
+        // GAME.Draw.rect(120,120,150,150, 'green');
+        // GAME.Draw.rect(20,20,150,150, 'green');
+        // GAME.Draw.rect(0,0,150,150, 'red');
+
+        console.log("estou aca");
+
+
+        makeGrid(8, 16, GAME.currentWidth/8, GAME.currentHeight/16);
+
 
     },
 
@@ -179,3 +185,40 @@ window.addEventListener('touchend', function(e) {
     // as above
     e.preventDefault();
 }, false);
+
+
+var makeGrid = function(rows, columns, horSize, verSize) {
+    console.log("bla", rows, columns, horSize, verSize);
+
+    for( var i = 0; i < rows; i++){
+        for( var j = 0; j < columns; j++)
+        {
+            // GAME.Draw.rect(i * horSize, j * verSize, 
+            //                 i * horSize + horSize, j * verSize + verSize, 
+            //                     'red');
+            if (i % 2 == 0) 
+                if (j % 2 == 0)    
+                    GAME.Draw.rect(i * horSize, j * verSize, 
+                             horSize, verSize, 
+                                'red');
+                else
+                    GAME.Draw.rect(i * horSize, j * verSize, 
+                             horSize, verSize, 
+                                'blue');
+            else 
+                if (j % 2 == 0)
+                    GAME.Draw.rect(i * horSize, j * verSize, 
+                            horSize, verSize, 
+                                'green');
+                else
+                    GAME.Draw.rect(i * horSize, j * verSize, 
+                            horSize, verSize, 
+                                'yellow'); 
+            GAME.Draw.rect(i*horSize, j*verSize, horSize, 1, 'black');
+            GAME.Draw.rect(i*horSize, j*verSize, 1, 2*verSize, 'black');
+            // GAME.Draw.rect(0,0,20,20,'green');
+            // GAME.ctx.fillRect(0, 0, 20, 20);
+            console.log("estou aqui " + i +" " + j)       
+        }
+    }
+}
