@@ -4,6 +4,7 @@ var ctx;
 var WIDTH = 400;
 var HEIGHT = 400;
 var rects = new Array();
+var startGame = false;
 
 function rect (x, y, w, h) {
 	ctx.beginPath();
@@ -20,7 +21,7 @@ function clear (i, j, w, h) {
 function init() {
 	canvas = document.getElementById ("canvas");
 	ctx = canvas.getContext ("2d");
-	createGrid ();
+	if(startGame) createGrid ();
 }
 
 function createGrid () {
