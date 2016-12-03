@@ -52,7 +52,8 @@ var SW = {
         // the canvas context enables us to 
         // interact with the canvas api
         SW.ctx = SW.canvas.getContext('2d');
-        
+
+        SW.images();        
         
 
         // we're ready to resize
@@ -93,9 +94,10 @@ var SW = {
     
         SW.nextTile -= 1;
         if (SW.nextTile < 0) {
-            SW.currentTile += 1;
+            SW.currentTile += 3;
+            SW.currentTile %= 4;
             // put a new instance of bubble into our entities array
-            SW.tileRow(SW.currentTile%2);
+            SW.tileRow(SW.currentTile);
             // reset the counter with a random value
             SW.nextTile = 39;
         }
@@ -212,6 +214,31 @@ SW.Draw = {
 
 };
 
+SW.matrix = [];
+SW.rotate = [];
+
+SW.images = function() {
+    b = new Image();
+    b.src = 'assets/visual/sprites/@2x/sprite-b.png';
+    bl = new Image();
+    bl.src = 'assets/visual/sprites/@2x/sprite-bl.png';
+    br = new Image();
+    br.src = 'assets/visual/sprites/@2x/sprite-br.png';
+    tl = new Image();
+    tl.src = 'assets/visual/sprites/@2x/sprite-tl.png';
+    tr = new Image();
+    tr.src = 'assets/visual/sprites/@2x/sprite-tr.png';
+    w = new Image();
+    w.src = 'assets/visual/sprites/@2x/sprite-w.png';
+    SW.matrix[0] = [tl, b, tr, w];
+    SW.matrix[1] = [w, bl, b, br];
+    SW.matrix[2] = [tr, w, tl, b];
+    SW.matrix[3] = [b, br, w, bl];
+    SW.rotate = [tl, tr, br, bl];
+};
+
+
+
 // + add this at the bottom of your code,
 // before the window.addEventListeners
 SW.Input = {
@@ -262,14 +289,26 @@ SW.Tile = function(i, c) {
 
     this.type = 'tile';
     this.size = SW.canvas.width/8;
-    if ((c+i)%2 == 0) {
-        this.color = "black";
-    }
-    else {
-        this.color = "white";
-    }
+    this.img = SW.matrix[c][i%4];
     this.x = this.size*i;
     this.y = -40;
+    if ((c+(i%4))%2 == 1) {
+        this.rot = -1;
+    }
+    else {
+        if (c == 0) {
+            this.rot = (i%4)/2;
+        }
+        else if (c == 1) {
+            this.rot = (i%4 == 1) ? 3 : 2
+        }
+        else if (c == 2) {
+            this.rot = (i%4 == 0) ? 1 : 0
+        }
+        else {
+            this.rot = (i%4 == 1) ? 2 : 3
+        }
+    }
     
 
     this.remove = false;
@@ -287,16 +326,15 @@ SW.Tile = function(i, c) {
     };
 
     this.render = function() {
-        SW.Draw.rect(this.x, this.y, this.size, this.size, this.color);
+        SW.ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
+        /*SW.Draw.rect(this.x, this.y, this.size, this.size, this.color);*/
     };
 
     this.isHit = function(_event) {
-    	console.log(SW.currentWidth, SW.currentHeight)
 
     	var clickedX = (320*_event.clientX)/SW.currentWidth;
     	var clickedY = (480*_event.clientY)/SW.currentHeight;
-        if(this.x < clickedX && (this.x+this.size) > clickedX && this.y < clickedY && (this.y+this.size) > clickedY) {
-            console.log(_event.clientX, " ", _event.clientY)
+        if(this.rot >= 0 && this.x < clickedX && (this.x+this.size) > clickedX && this.y < clickedY && (this.y+this.size) > clickedY) {
             return true;
         }
     };
@@ -306,7 +344,9 @@ SW.Tile = function(i, c) {
 SW.canvas.addEventListener('click', function(_event) {
     for(var i = 0; i < SW.entities.length; i++) {
         if(SW.entities[i].isHit(_event)) {
-            SW.entities[i].color = "red";    
+            SW.entities[i].rot += 1;
+            SW.entities[i].rot %= 4;
+            SW.entities[i].img = SW.rotate[SW.entities[i].rot];    
         }
     }
 });
