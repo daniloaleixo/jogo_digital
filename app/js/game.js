@@ -135,7 +135,6 @@ var SW = {
             SW.update();
             SW.render();
             SW.countTransition -= 1
-            console.log("estou na trnasicao");
         }
         else {
             SW.update();
