@@ -60,10 +60,10 @@ var SW = {
         SW.resize();
         
         // listen for clicks
-        // window.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     SW.Input.set(e);
-        // }, false);
+        window.addEventListener('click', function(e) {
+            e.preventDefault();
+            SW.Input.set(e);
+        }, false);
         
         // listen for touches
         window.addEventListener('touchstart', function(e) {
@@ -101,7 +101,17 @@ var SW = {
             // reset the counter with a random value
             SW.nextTile = 39;
         }
-
+    
+        // spawn a new instance of Touch
+        // if the user has tapped the screen
+        if (SW.Input.tapped) {
+            /*SW.entities.push(new SW.Touch(SW.Input.x, SW.Input.y));*/
+            // set tapped back to false
+            // to avoid spawning a new touch
+            // in the next cycle
+            SW.Input.tapped = false;
+        }
+    
         // cycle through all entities and update as necessary
         for (i = 0; i < SW.entities.length; i += 1) {
             SW.entities[i].update();
@@ -121,7 +131,7 @@ var SW = {
     
         // cycle through all entities and render to canvas
         for (i = 0; i < SW.entities.length; i += 1) {
-            SW.entities[i].render(SW.entities[i].rot >= 0);
+            SW.entities[i].render();
         } 
     },
     
@@ -183,17 +193,9 @@ SW.Draw = {
         SW.ctx.clearRect(0, 0, SW.WIDTH, SW.HEIGHT);
     },
 
-    fillRect: function(x, y, w, h, col) {
+    rect: function(x, y, w, h, col) {
         SW.ctx.fillStyle = col;
         SW.ctx.fillRect(x, y, w, h);
-    },
-
-    rect: function(x, y, w, h, col, width) {
-        SW.ctx.beginPath();
-        SW.ctx.lineWidth=width;
-        SW.ctx.strokeStyle=col;
-        SW.ctx.rect(x+(width/2),y+(width/2),w-width,h-width); 
-        SW.ctx.stroke();
     },
 
     circle: function(x, y, r, col) {
@@ -232,12 +234,50 @@ SW.images = function() {
     SW.matrix[1] = [w, bl, b, br];
     SW.matrix[2] = [tr, w, tl, b];
     SW.matrix[3] = [b, br, w, bl];
-    for (var i = 0; i < 32; i++) {
-        x = new Image();
-        x.src = 'assets/visual/sprites/@2x/rots/sp'+i+'.png';
-        SW.rotate[i] = x;
-    }
+    SW.rotate = [tl, tr, br, bl];
 };
+
+
+
+// + add this at the bottom of your code,
+// before the window.addEventListeners
+SW.Input = {
+
+    x: 0,
+    y: 0,
+    tapped :false,
+
+    set: function(data) {
+        this.x = (data.pageX - SW.offset.left) / SW.scale;
+        this.y = (data.pageY - SW.offset.top) / SW.scale;
+        this.tapped = true; 
+
+    }
+
+};
+
+/*SW.Touch = function(x, y) {
+
+    this.type = 'touch';    // we'll need this later
+    this.x = x;             // the x coordinate
+    this.y = y;             // the y coordinate
+    this.r = 5;             // the radius
+    this.opacity = 1;       // initial opacity; the dot will fade out
+    this.fade = 0.05;       // amount by which to fade on each game tick
+    this.remove = false;    // flag for removing this entity. SW.update
+                            // will take care of this
+
+    this.update = function() {
+        // reduce the opacity accordingly
+        this.opacity -= this.fade; 
+        // if opacity if 0 or less, flag for removal
+        this.remove = (this.opacity < 0) ? true : false;
+    };
+    this.render = function() {
+        SW.Draw.circle(this.x, this.y, this.r, 'rgba(255,0,0,'+this.opacity+')');
+    };
+
+};*/
 
 SW.tileRow = function(c) {
     for (var i = 0; i < 8; i++) {
@@ -257,30 +297,23 @@ SW.Tile = function(i, c) {
     }
     else {
         if (c == 0) {
-            this.rot = (i%4 == 0) ? 0 : 8;
+            this.rot = (i%4)/2;
         }
         else if (c == 1) {
-            this.rot = (i%4 == 1) ? 24 : 16;
+            this.rot = (i%4 == 1) ? 3 : 2
         }
         else if (c == 2) {
-            this.rot = (i%4 == 0) ? 8 : 0;
+            this.rot = (i%4 == 0) ? 1 : 0
         }
         else {
-            this.rot = (i%4 == 1) ? 16 : 24
+            this.rot = (i%4 == 1) ? 2 : 3
         }
     }
-    this.isRot = 0;
+    
 
     this.remove = false;
 
     this.update = function() {
-
-        if (this.isRot > 0) {
-            this.isRot -= 1;
-            this.rot += 1;
-            this.rot %= 32;
-            this.img = SW.rotate[this.rot];
-        }
 
         // move down the screen by 1 pixel
         this.y += 1;
@@ -292,27 +325,28 @@ SW.Tile = function(i, c) {
 
     };
 
-    this.render = function(wrong) {
+    this.render = function() {
         SW.ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
-        if (wrong) {
-            SW.Draw.rect(this.x, this.y, this.size, this.size, "red", 3);
-        }
+        /*SW.Draw.rect(this.x, this.y, this.size, this.size, this.color);*/
     };
 
     this.isHit = function(_event) {
 
     	var clickedX = (320*_event.clientX)/SW.currentWidth;
     	var clickedY = (480*_event.clientY)/SW.currentHeight;
-        if(this.rot >= 0 && this.isRot <= 0 && this.x < clickedX && (this.x+this.size) > clickedX && this.y < clickedY && (this.y+this.size) > clickedY) {
+        if(this.rot >= 0 && this.x < clickedX && (this.x+this.size) > clickedX && this.y < clickedY && (this.y+this.size) > clickedY) {
             return true;
         }
     };
+
 };
 
 SW.canvas.addEventListener('click', function(_event) {
     for(var i = 0; i < SW.entities.length; i++) {
         if(SW.entities[i].isHit(_event)) {
-            SW.entities[i].isRot = 8;
+            SW.entities[i].rot += 1;
+            SW.entities[i].rot %= 4;
+            SW.entities[i].img = SW.rotate[SW.entities[i].rot];    
         }
     }
 });
