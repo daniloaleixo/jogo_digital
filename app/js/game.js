@@ -58,33 +58,6 @@ var SW = {
 
         // we're ready to resize
         SW.resize();
-        
-        // listen for clicks
-        window.addEventListener('click', function(e) {
-            e.preventDefault();
-            SW.Input.set(e);
-        }, false);
-        
-        // listen for touches
-        window.addEventListener('touchstart', function(e) {
-            e.preventDefault();
-            // the event object has an array
-            // named touches; we just want
-            // the first touch
-            SW.Input.set(e.touches[0]);
-        }, false);
-        window.addEventListener('touchmove', function(e) {
-            // we're not interested in this,
-            // but prevent default behaviour
-            // so the screen doesn't scroll
-            // or zoom
-            e.preventDefault();
-        }, false);
-        window.addEventListener('touchend', function(e) {
-            // as above
-            e.preventDefault();
-        }, false);
-        
         SW.loop();
 
     },
@@ -312,6 +285,14 @@ SW.Tile = function(i, c) {
 SW.canvas.addEventListener('click', function(_event) {
     for(var i = 0; i < SW.entities.length; i++) {
         if(SW.entities[i].isHit(_event)) {
+            SW.entities[i].isRot = 8;
+        }
+    }
+});
+
+SW.canvas.addEventListener('touchstart', function(_event) {
+    for(var i = 0; i < SW.entities.length; i++) {
+        if(SW.entities[i].isHit(_event.touches[0])) {
             SW.entities[i].isRot = 8;
         }
     }
