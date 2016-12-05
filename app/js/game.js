@@ -59,13 +59,13 @@ var SW = {
         // we're ready to resize
         SW.resize();
         
-        // listen for clicks
-        // window.addEventListener('click', function(e) {
-        //     e.preventDefault();
-        //     SW.Input.set(e);
-        // }, false);
+        listen for clicks
+        window.addEventListener('click', function(e) {
+            e.preventDefault();
+            SW.Input.set(e);
+        }, false);
         
-        // listen for touches
+        listen for touches
         window.addEventListener('touchstart', function(e) {
             e.preventDefault();
             // the event object has an array
@@ -295,7 +295,7 @@ SW.Tile = function(i, c) {
     this.render = function(wrong) {
         SW.ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
         if (wrong) {
-            SW.Draw.rect(this.x, this.y, this.size, this.size, "red", 3);
+            SW.Draw.rect(this.x, this.y, this.size, this.size, "#ff5252", 3);
         }
     };
 
