@@ -65,7 +65,7 @@ var SW = {
     update: function() {
         var i;
     
-        SW.nextTile -= 1;
+        SW.nextTile -= SW.speed;
         if (SW.nextTile < 0) {
             SW.currentTile += 3;
             SW.currentTile %= 4;
@@ -88,6 +88,10 @@ var SW = {
 								} 
 								if ((i+1)%4 == 0) {
 									SW.score += SW.dist;
+									if (SW.score%500 == 0 && SW.score != 0) {
+										SW.speed += 0.2;
+										SW.prob -= 0.01;
+									}
 									//console.log('here', SW.score);
 								}
                 SW.entities.splice(i, 1);
@@ -198,6 +202,8 @@ SW.rotate = [];
 SW.lives = 3;
 SW.score = 0;
 SW.dist = 20;
+SW.speed = 1;
+SW.prob = 0.95;
 
 SW.images = function() {
     b = new Image();
@@ -245,7 +251,7 @@ SW.tileRow = function(c) {
 					this.rot = (i%4 == 1) ? 16 : 24
 				}
 				cc = this.rot;
-				if (r > 0.95) {
+				if (r > SW.prob) {
 					this.rot = 8*Math.floor(Math.random()*4);
 					img = SW.rotate[this.rot];
 				}
@@ -269,6 +275,7 @@ SW.Tile = function(rot, matrix, i, cc) {
     this.remove = false;
 
     this.update = function() {
+				
 
         if (this.isRot > 0) {
             this.isRot -= 1;
@@ -278,7 +285,7 @@ SW.Tile = function(rot, matrix, i, cc) {
         }
 
         // move down the screen by 1 pixel
-        this.y += 1;
+        this.y += SW.speed;
 
         // if off screen, flag for removal
         if (this.y > SW.HEIGHT + 10) {
@@ -321,5 +328,17 @@ SW.canvas.addEventListener('touchstart', function(_event) {
         if(SW.entities[i].isHit(_event.touches[0])) {
             SW.entities[i].isRot = 8;
         }
+    }
+});
+
+SW.canvas.addEventListener('touchend', function(_event) {
+    for(var i = 0; i < SW.entities.length; i++) {
+			_event.preventDefault();
+    }
+});
+
+SW.canvas.addEventListener('touchmove', function(_event) {
+    for(var i = 0; i < SW.entities.length; i++) {
+			_event.preventDefault();
     }
 });
