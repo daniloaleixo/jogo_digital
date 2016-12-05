@@ -96,6 +96,8 @@ var SW = {
 										SW.wannaPlay = false;
 										alert ("Perdeu!");
 										SW.restart();
+                                        moveYFrontPage = 0;
+                                        nextTile = 0;
 									}
 								} 
 								if ((i+1)%4 == 0) {
