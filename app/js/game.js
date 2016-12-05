@@ -59,13 +59,13 @@ var SW = {
         // we're ready to resize
         SW.resize();
         
-        listen for clicks
+        // listen for clicks
         window.addEventListener('click', function(e) {
             e.preventDefault();
             SW.Input.set(e);
         }, false);
         
-        listen for touches
+        // listen for touches
         window.addEventListener('touchstart', function(e) {
             e.preventDefault();
             // the event object has an array
