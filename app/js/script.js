@@ -1,11 +1,14 @@
 
 var canvas = document.getElementById("canvas");
 var context = canvas.getContext("2d");
-var WIDTH = 400;
-var HEIGHT = 400;
+var WIDTH = 320;
+var HEIGHT = 480;
 var rects = new Array();
-var numSquaresHor = 8, numSquaresVer = 8;
-var sizeSquare = 50;
+// var numSquaresHor = 8, numSquaresVer = 8;
+// var sizeSquare = 50;
+var numSquaresHor = 8;
+var sizeSquare = WIDTH / numSquaresHor;
+var numSquaresVer = HEIGHT / sizeSquare;
 var fontSizeTitle = WIDTH/12;
 
 
@@ -87,30 +90,30 @@ function drawTitle(){
 	context.font="bold " + fontSizeTitle + "px Georgia";
 	context.textAlign = "center";
 	context.fillStyle = "#607d8b"
-	context.fillText("Nome",WIDTH/2,HEIGHT/5);
-	context.fillText("do Jogo",WIDTH/2,HEIGHT/5+fontSizeTitle);
+	context.fillText("Nome",WIDTH/2,HEIGHT/numSquaresVer * 2);
+	context.fillText("do Jogo",WIDTH/2,HEIGHT/numSquaresVer * 2 +fontSizeTitle);
 }
 
 function drawLogo(){
 	context.drawImage(spriteTL, WIDTH/numSquaresHor * 2 + sizeSquare/2, 
-								HEIGHT/numSquaresVer * 3, sizeSquare, sizeSquare);
-	context.drawImage(spriteB, WIDTH/numSquaresHor * 3 + sizeSquare/2, 	
-								HEIGHT/numSquaresVer * 3, sizeSquare, sizeSquare);
-	context.drawImage(spriteTR, WIDTH/numSquaresHor * 3 + sizeSquare/2, 	
 								HEIGHT/numSquaresVer * 4, sizeSquare, sizeSquare);
+	context.drawImage(spriteB, WIDTH/numSquaresHor * 3 + sizeSquare/2, 	
+								HEIGHT/numSquaresVer * 4, sizeSquare, sizeSquare);
+	context.drawImage(spriteTR, WIDTH/numSquaresHor * 3 + sizeSquare/2, 	
+								HEIGHT/numSquaresVer * 5, sizeSquare, sizeSquare);
 
 	context.drawImage(spriteTR, WIDTH/numSquaresHor * 4 + sizeSquare/2, 
-								HEIGHT/numSquaresVer * 3, sizeSquare, sizeSquare);
+								HEIGHT/numSquaresVer * 4, sizeSquare, sizeSquare);
 	context.drawImage(spriteB, WIDTH/numSquaresHor * 4 + sizeSquare/2, 
-								HEIGHT/numSquaresVer * 4, sizeSquare, sizeSquare);
+								HEIGHT/numSquaresVer * 5, sizeSquare, sizeSquare);
 	context.drawImage(spriteBR, WIDTH/numSquaresHor * 5 + sizeSquare/2, 
-								HEIGHT/numSquaresVer * 4, sizeSquare, sizeSquare);
+								HEIGHT/numSquaresVer * 5, sizeSquare, sizeSquare);
 
 	context.strokeStyle = "#ff5252";
 	context.lineWidth=sizeSquare/5;
 	context.globalAlpha = 0.8;
 	context.strokeRect(WIDTH/numSquaresHor * 3 + sizeSquare/2 - sizeSquare/10,
-		HEIGHT/numSquaresVer * 4 - sizeSquare/10,
+		HEIGHT/numSquaresVer * 5 - sizeSquare/10,
 		sizeSquare + sizeSquare/5,
 		sizeSquare+sizeSquare/5);
 	context.globalAlpha = 1.0;
@@ -120,7 +123,7 @@ function drawTapContinue(){
 	context.font="bold " + fontSizeTitle/2 + "px Georgia";
 	context.textAlign = "center";
 	context.fillStyle = "#607d8b"
-	context.fillText("Toque para continuar",WIDTH/2,HEIGHT/10 * 7);
+	context.fillText("Toque para continuar",WIDTH/2,HEIGHT/numSquaresVer * 7);
 }
 
 
@@ -128,7 +131,7 @@ function drawBottomMenu(){
 	context.font="bold " + fontSizeTitle/1.8 + "px Georgia";
 	context.textAlign = "center";
 	context.fillStyle = "#607d8b"
-	context.fillText("Ajustes",WIDTH/2 - fontSizeTitle/1.8 * 5 ,HEIGHT/7 * 6);
-	context.fillText("Sobre",WIDTH/2,HEIGHT/7 * 6);
-	context.fillText("Créditos",WIDTH/2 + fontSizeTitle/1.8 * 5,HEIGHT/7 * 6);
+	context.fillText("Ajustes",WIDTH/2 - fontSizeTitle/1.8 * 5 ,HEIGHT/numSquaresVer * 9);
+	context.fillText("Sobre",WIDTH/2,HEIGHT/numSquaresVer * 9);
+	context.fillText("Créditos",WIDTH/2 + fontSizeTitle/1.8 * 5,HEIGHT/numSquaresVer * 9);
 }
