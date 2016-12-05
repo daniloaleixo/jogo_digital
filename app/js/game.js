@@ -414,9 +414,9 @@ SW.FrontPage = {
         SW.ctx.font="bold " + SW.fontSizeTitle + "px Georgia";
         SW.ctx.textAlign = "center";
         SW.ctx.fillStyle = "#607d8b"
-        SW.ctx.fillText("Nome",SW.canvas.width/2,
+        SW.ctx.fillText("Olha por",SW.canvas.width/2,
                             SW.canvas.height/SW.numSquaresVertical * 2);
-        SW.ctx.fillText("do Jogo",SW.canvas.width/2,
+        SW.ctx.fillText("onde anda",SW.canvas.width/2,
                     SW.canvas.height/SW.numSquaresVertical * 2 + SW.fontSizeTitle);
     },
 
