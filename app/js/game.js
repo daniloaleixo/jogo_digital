@@ -97,7 +97,7 @@ var SW = {
 										alert ("Perdeu!");
 										SW.restart();
                                         moveYFrontPage = 0;
-                                        nextTile = 0;
+                                        SW.nextTile = 0;
 									}
 								} 
 								if ((i+1)%4 == 0) {
