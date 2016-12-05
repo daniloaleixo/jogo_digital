@@ -20,6 +20,12 @@ var SW = {
     HEIGHT:  480, 
     
     entities: [],
+
+    numSquaresHorizontal: 8,
+    numSquaresVertical: 8,
+    sizeSquare: 1,
+    fontSizeTitle : 26,
+    wannaPlay: false,
     
     nextTile: 100,
     currentTile: 0,
@@ -114,8 +120,13 @@ var SW = {
 
         requestAnimFrame( SW.loop );
 
-        SW.update();
-        SW.render();
+        if(!SW.wannaPlay)
+            SW.FrontPage.update();
+        else {
+            SW.update();
+            SW.render();
+        }
+
     },
 
     resize: function() {
@@ -141,6 +152,11 @@ var SW = {
         SW.scale = SW.currentWidth / SW.WIDTH;
         SW.offset.top = SW.canvas.offsetTop;
         SW.offset.left = SW.canvas.offsetLeft;
+
+        SW.sizeSquare = (SW.canvas.width / 8)
+        SW.numSquaresVertical = SW.canvas.height / SW.sizeSquare;
+        SW.fontSizeTitle = SW.canvas.width/12;
+
 
         // we use a timeout here because some mobile
         // browsers don't fire if there is not
@@ -316,11 +332,27 @@ SW.Tile = function(rot, matrix, i, cc) {
 };
 
 SW.canvas.addEventListener('click', function(_event) {
-    for(var i = 0; i < SW.entities.length; i++) {
-        if(SW.entities[i].isHit(_event)) {
-            SW.entities[i].isRot = 8;
+
+    if(SW.wannaPlay){
+        for(var i = 0; i < SW.entities.length; i++) {
+            if(SW.entities[i].isHit(_event)) {
+                SW.entities[i].isRot = 8;
+            }
+        }
+    } else {
+
+        var clickedX = (320*_event.clientX)/SW.currentWidth;
+        var clickedY = (480*_event.clientY)/SW.currentHeight;
+
+        //  Button to play
+        if(_event.clientX >= SW.canvas.width/SW.numSquaresHorizontal * 4 && 
+            _event.clientX <= SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare * 2 &&
+            _event.clientY < SW.canvas.height/SW.numSquaresVertical * 9)
+        {
+            SW.wannaPlay = true;
         }
     }
+
 });
 
 SW.canvas.addEventListener('touchstart', function(_event) {
@@ -342,3 +374,93 @@ SW.canvas.addEventListener('touchmove', function(_event) {
 			_event.preventDefault();
     }
 });
+
+SW.FrontPage = {
+
+    update: function(){
+        SW.FrontPage.clear();
+        SW.FrontPage.move();
+        SW.FrontPage.draw();
+    },
+
+    clear: function(){
+        SW.ctx.clearRect(0, 0, SW.WIDTH, SW.HEIGHT);
+    },
+
+    move: function(){
+
+    },
+
+    draw: function(){
+        SW.FrontPage.drawBG();
+        SW.FrontPage.drawTitle();
+        SW.FrontPage.drawLogo();
+        SW.FrontPage.drawTapContinue();
+        SW.FrontPage.drawBottomMenu();
+    },
+
+    drawBG: function(){
+
+        for(var i = 0; i < SW.numSquaresHorizontal * SW.sizeSquare; i += SW.sizeSquare )
+        {
+            for (var j = 0; j < SW.numSquaresVertical * SW.sizeSquare; j += SW.sizeSquare){
+                SW.ctx.drawImage (SW.matrix[0][3], i, j, SW.sizeSquare, SW.sizeSquare);
+            }
+        }
+
+    },
+
+    drawTitle: function(){
+        SW.ctx.font="bold " + SW.fontSizeTitle + "px Georgia";
+        SW.ctx.textAlign = "center";
+        SW.ctx.fillStyle = "#607d8b"
+        SW.ctx.fillText("Nome",SW.canvas.width/2,
+                            SW.canvas.height/SW.numSquaresVertical * 2);
+        SW.ctx.fillText("do Jogo",SW.canvas.width/2,
+                    SW.canvas.height/SW.numSquaresVertical * 2 + SW.fontSizeTitle);
+    },
+
+    drawLogo: function(){
+        SW.ctx.drawImage(SW.matrix[0][0], SW.canvas.width/SW.numSquaresHorizontal * 2 + SW.sizeSquare/2, 
+                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+        SW.ctx.drawImage(SW.matrix[0][1], SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2,  
+                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+        SW.ctx.drawImage(SW.matrix[1][3], SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2,     
+                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+
+        SW.ctx.drawImage(SW.matrix[0][2], SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare/2, 
+                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+        SW.ctx.drawImage(SW.matrix[0][1], SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare/2, 
+                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+        SW.ctx.drawImage(SW.matrix[1][3], SW.canvas.width/SW.numSquaresHorizontal * 5 + SW.sizeSquare/2, 
+                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+
+        SW.ctx.strokeStyle = "#ff5252";
+        SW.ctx.lineWidth=SW.sizeSquare/5;
+        SW.ctx.globalAlpha = 0.8;
+        SW.ctx.strokeRect(SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2 - SW.sizeSquare/10,
+            SW.canvas.height/SW.numSquaresVertical * 5 - SW.sizeSquare/10,
+            SW.sizeSquare + SW.sizeSquare/5,
+            SW.sizeSquare+SW.sizeSquare/5);
+        SW.ctx.globalAlpha = 1.0;
+    },
+
+    drawTapContinue: function(){
+        SW.ctx.font="bold " + SW.fontSizeTitle/2 + "px Georgia";
+        SW.ctx.textAlign = "center";
+        SW.ctx.fillStyle = "#607d8b";
+        SW.ctx.fillText("Toque para continuar",SW.canvas.width/2,
+                        SW.canvas.height/SW.numSquaresVertical * 7);
+    },
+
+    drawBottomMenu: function(){
+        SW.ctx.font="bold " + SW.fontSizeTitle/1.8 + "px Georgia";
+        SW.ctx.textAlign = "center";
+        SW.ctx.fillStyle = "#607d8b"
+        SW.ctx.fillText("Ajustes",SW.canvas.width/2 - SW.fontSizeTitle/1.8 * 5,
+                                SW.canvas.height/SW.numSquaresVertical * 9);
+        SW.ctx.fillText("Sobre",SW.canvas.width/2,SW.canvas.height/ SW.numSquaresVertical * 9);
+        SW.ctx.fillText("Créditos",SW.canvas.width/2 + SW.fontSizeTitle/1.8 * 5,
+                                SW.canvas.height/ SW.numSquaresVertical * 9);
+    },
+}
