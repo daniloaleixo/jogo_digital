@@ -27,7 +27,7 @@ var SW = {
     fontSizeTitle : 26,
     wannaPlay: false,
     
-    nextTile: 100,
+    nextTile: 0,
     currentTile: 0,
     
     scale:  1,
@@ -90,7 +90,11 @@ var SW = {
             if (SW.entities[i].remove) {
 								if (SW.entities[i].rot != SW.entities[i].cc){
 									SW.lives--;
-									if (SW.lives == 0) alert ("Perdeu!");
+									if (SW.lives == 0) {
+										SW.wannaPlay = false;
+										alert ("Perdeu!");
+										SW.restart();
+									}
 								} 
 								if ((i+1)%4 == 0) {
 									SW.score += SW.dist;
@@ -164,7 +168,16 @@ var SW = {
         window.setTimeout(function() {
                 window.scrollTo(0,1);
         }, 1);
-    }
+    },
+
+		restart: function() {
+			SW.score = 0;
+			SW.lives = 3;
+			SW.speed = 1;
+			SW.prob = 0.95;
+			SW.entities.splice(0, SW.entities.length+1);
+			SW.currentTile = 0;
+		}
 
 };
 
@@ -312,9 +325,9 @@ SW.Tile = function(rot, matrix, i, cc) {
 
     this.render = function(wrong) {
         SW.ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
-				SW.Draw.text ("Score: "+SW.score, 30, 30, 12, "#ff5252"); 
+				SW.Draw.text ("Score: "+SW.score, 50, 30, 12, "#ff5252"); 
 				for (var i = 0; i < SW.lives; i++) {
-					SW.Draw.circle (200+i*15, 25, 5, "#ff5252"); 
+					SW.Draw.circle (220+i*15, 25, 5, "#ff5252"); 
 				}
         if (wrong) {
             SW.Draw.rect(this.x, this.y, this.size, this.size, "#ff5252", 3);
