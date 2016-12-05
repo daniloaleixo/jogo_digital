@@ -32,6 +32,8 @@ var SW = {
     
     scale:  1,
     offset: {top: 0, left: 0},
+
+    countTransition: 0,
     
     // we'll set the rest of these
     // in the init function
@@ -126,6 +128,13 @@ var SW = {
 
         if(!SW.wannaPlay)
             SW.FrontPage.update();
+        else if(SW.countTransition > 0){
+            SW.FrontPage.update();
+            SW.update();
+            SW.render();
+            SW.countTransition -= 1
+            console.log("estou na trnasicao");
+        }
         else {
             SW.update();
             SW.render();
@@ -358,12 +367,13 @@ SW.canvas.addEventListener('click', function(_event) {
         var clickedY = (480*_event.clientY)/SW.currentHeight;
 
         //  Button to play
-        if(_event.clientX >= SW.canvas.width/SW.numSquaresHorizontal * 4 && 
-            _event.clientX <= SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare * 2 &&
-            _event.clientY < SW.canvas.height/SW.numSquaresVertical * 9)
-        {
+        // if(_event.clientX >= SW.canvas.width/SW.numSquaresHorizontal * 4 && 
+        //     _event.clientX <= SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare * 2 &&
+        //     _event.clientY < SW.canvas.height/SW.numSquaresVertical * 9)
+        // {
             SW.wannaPlay = true;
-        }
+            SW.countTransition = SW.canvas.height;
+        // }
     }
 
 });
@@ -388,6 +398,8 @@ SW.canvas.addEventListener('touchmove', function(_event) {
     }
 });
 
+
+var moveYFrontPage = 0;
 SW.FrontPage = {
 
     update: function(){
@@ -401,7 +413,8 @@ SW.FrontPage = {
     },
 
     move: function(){
-
+        if(SW.countTransition > 0)
+            moveYFrontPage += 1;
     },
 
     draw: function(){
@@ -409,7 +422,7 @@ SW.FrontPage = {
         SW.FrontPage.drawTitle();
         SW.FrontPage.drawLogo();
         SW.FrontPage.drawTapContinue();
-        SW.FrontPage.drawBottomMenu();
+        // SW.FrontPage.drawBottomMenu();
     },
 
     drawBG: function(){
@@ -417,7 +430,7 @@ SW.FrontPage = {
         for(var i = 0; i < SW.numSquaresHorizontal * SW.sizeSquare; i += SW.sizeSquare )
         {
             for (var j = 0; j < SW.numSquaresVertical * SW.sizeSquare; j += SW.sizeSquare){
-                SW.ctx.drawImage (SW.matrix[0][3], i, j, SW.sizeSquare, SW.sizeSquare);
+                SW.ctx.drawImage (SW.matrix[0][3], i, j + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
             }
         }
 
@@ -428,31 +441,31 @@ SW.FrontPage = {
         SW.ctx.textAlign = "center";
         SW.ctx.fillStyle = "#607d8b"
         SW.ctx.fillText("Olha por",SW.canvas.width/2,
-                            SW.canvas.height/SW.numSquaresVertical * 2);
+                            SW.canvas.height/SW.numSquaresVertical * 3 + moveYFrontPage);
         SW.ctx.fillText("onde anda",SW.canvas.width/2,
-                    SW.canvas.height/SW.numSquaresVertical * 2 + SW.fontSizeTitle);
+                    SW.canvas.height/SW.numSquaresVertical * 3 + SW.fontSizeTitle + moveYFrontPage);
     },
 
     drawLogo: function(){
         SW.ctx.drawImage(SW.matrix[0][0], SW.canvas.width/SW.numSquaresHorizontal * 2 + SW.sizeSquare/2, 
-                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 5 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
         SW.ctx.drawImage(SW.matrix[0][1], SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2,  
-                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 5 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
         SW.ctx.drawImage(SW.matrix[1][3], SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2,     
-                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 6 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
 
         SW.ctx.drawImage(SW.matrix[0][2], SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare/2, 
-                            SW.canvas.height/SW.numSquaresVertical * 4, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 5 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
         SW.ctx.drawImage(SW.matrix[0][1], SW.canvas.width/SW.numSquaresHorizontal * 4 + SW.sizeSquare/2, 
-                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 6 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
         SW.ctx.drawImage(SW.matrix[1][3], SW.canvas.width/SW.numSquaresHorizontal * 5 + SW.sizeSquare/2, 
-                            SW.canvas.height/SW.numSquaresVertical * 5, SW.sizeSquare, SW.sizeSquare);
+                            SW.canvas.height/SW.numSquaresVertical * 6 + moveYFrontPage, SW.sizeSquare, SW.sizeSquare);
 
         SW.ctx.strokeStyle = "#ff5252";
         SW.ctx.lineWidth=SW.sizeSquare/5;
         SW.ctx.globalAlpha = 0.8;
         SW.ctx.strokeRect(SW.canvas.width/SW.numSquaresHorizontal * 3 + SW.sizeSquare/2 - SW.sizeSquare/10,
-            SW.canvas.height/SW.numSquaresVertical * 5 - SW.sizeSquare/10,
+            SW.canvas.height/SW.numSquaresVertical * 6 - SW.sizeSquare/10 + moveYFrontPage,
             SW.sizeSquare + SW.sizeSquare/5,
             SW.sizeSquare+SW.sizeSquare/5);
         SW.ctx.globalAlpha = 1.0;
@@ -463,7 +476,7 @@ SW.FrontPage = {
         SW.ctx.textAlign = "center";
         SW.ctx.fillStyle = "#607d8b";
         SW.ctx.fillText("Toque para continuar",SW.canvas.width/2,
-                        SW.canvas.height/SW.numSquaresVertical * 7);
+                        SW.canvas.height/SW.numSquaresVertical * 8 + moveYFrontPage);
     },
 
     drawBottomMenu: function(){
