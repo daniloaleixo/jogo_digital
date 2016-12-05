@@ -82,8 +82,16 @@ var SW = {
             // delete from array if remove property
             // flag is set to true
             if (SW.entities[i].remove) {
+								if (SW.entities[i].rot != SW.entities[i].cc){
+									SW.lives--;
+									if (SW.lives == 0) alert ("Perdeu!");
+								} 
+								if ((i+1)%4 == 0) {
+									SW.score += SW.dist;
+									//console.log('here', SW.score);
+								}
                 SW.entities.splice(i, 1);
-            }
+						}
         }
     },
     
@@ -94,7 +102,7 @@ var SW = {
     
         // cycle through all entities and render to canvas
         for (i = 0; i < SW.entities.length; i += 1) {
-            SW.entities[i].render(SW.entities[i].rot >= 0);
+            SW.entities[i].render(SW.entities[i].rot != SW.entities[i].cc);
         } 
     },
     
@@ -178,7 +186,7 @@ SW.Draw = {
     },
 
     text: function(string, x, y, size, col) {
-        SW.ctx.font = 'bold '+size+'px Monospace';
+        SW.ctx.font = 'Fredoka1, Sanserif'+size+'px Monospace';
         SW.ctx.fillStyle = col;
         SW.ctx.fillText(string, x, y);
     }
@@ -187,6 +195,9 @@ SW.Draw = {
 
 SW.matrix = [];
 SW.rotate = [];
+SW.lives = 3;
+SW.score = 0;
+SW.dist = 20;
 
 SW.images = function() {
     b = new Image();
@@ -213,36 +224,47 @@ SW.images = function() {
 };
 
 SW.tileRow = function(c) {
+		var cc;
     for (var i = 0; i < 8; i++) {
-        SW.entities.push(new SW.Tile(i, c));  
+			var img = SW.matrix[c][i%4];
+			if ((c+(i%4))%2 == 1) {
+				this.rot = -1;
+				cc = this.rot;
+			} else {
+				var r = Math.random();
+				if (c == 0) {
+					this.rot = (i%4 == 0) ? 0 : 8;
+				}
+				else if (c == 1) {
+					this.rot = (i%4 == 1) ? 24 : 16;
+				}
+				else if (c == 2) {
+					this.rot = (i%4 == 0) ? 8 : 0;
+				}
+				else {
+					this.rot = (i%4 == 1) ? 16 : 24
+				}
+				cc = this.rot;
+				if (r > 0.95) {
+					this.rot = 8*Math.floor(Math.random()*4);
+					img = SW.rotate[this.rot];
+				}
+			}
+        SW.entities.push(new SW.Tile(this.rot, img, i, cc));  
     }
 };
 
-SW.Tile = function(i, c) {
+SW.Tile = function(rot, matrix, i, cc) {
 
     this.type = 'tile';
     this.size = SW.canvas.width/8;
-    this.img = SW.matrix[c][i%4];
+		this.rot = rot;
+    this.img = matrix;
     this.x = this.size*i;
     this.y = -40;
-    if ((c+(i%4))%2 == 1) {
-        this.rot = -1;
-    }
-    else {
-        if (c == 0) {
-            this.rot = (i%4 == 0) ? 0 : 8;
-        }
-        else if (c == 1) {
-            this.rot = (i%4 == 1) ? 24 : 16;
-        }
-        else if (c == 2) {
-            this.rot = (i%4 == 0) ? 8 : 0;
-        }
-        else {
-            this.rot = (i%4 == 1) ? 16 : 24
-        }
-    }
     this.isRot = 0;
+		this.cc = cc;
+
 
     this.remove = false;
 
@@ -267,6 +289,10 @@ SW.Tile = function(i, c) {
 
     this.render = function(wrong) {
         SW.ctx.drawImage(this.img, this.x, this.y, this.size, this.size);
+				SW.Draw.text ("Score: "+SW.score, 30, 30, 12, "#ff5252"); 
+				for (var i = 0; i < SW.lives; i++) {
+					SW.Draw.circle (200+i*15, 25, 5, "#ff5252"); 
+				}
         if (wrong) {
             SW.Draw.rect(this.x, this.y, this.size, this.size, "#ff5252", 3);
         }
